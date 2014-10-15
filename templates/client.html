@@ -1,0 +1,347 @@
+<html>
+  <head>
+    <title>Twilio WebRTC Phone</title>
+
+  <style>
+    textarea{resize:none}
+  </style>
+
+  <script type="text/javascript" src="{{twiliojs}}"></script>
+
+  <script type="text/javascript">
+  var False = false, True = true; // python boolean values
+  var connection = null;
+  var muted = false;
+
+  window.onload = function() {
+    setState("init");
+
+    Twilio.Device.setup("{{token}}", {"debug":true, "rtc":true, "chunderw":"{{chunderw}}", "host":"{{chunder}}", "eventsHost":"{{matrix}}", "secureSignaling":{{secureSignaling}}});
+  }
+
+
+   Twilio.Device.ready(function(device) {
+    status("Twilio device ready\n");
+    setState("ready");
+  })
+
+  Twilio.Device.offline(function() {
+    status("Twilio device offline\n");
+    setState("offline");
+  })
+
+   Twilio.Device.error(function(error) {
+    status("Twilio device error: " + error.message + " (" + error.code + ")\n");
+    hangup();
+  })
+
+  Twilio.Device.connect(function(conn) {
+    status("Twilio device connect, Call Sid: " + conn.parameters.CallSid + "\n");
+    setState("connected");
+    muted = false;
+  })
+
+  Twilio.Device.disconnect(function(conn) {
+    status("Twilio device disconnect\n");
+    connection = null;
+    setState("ready");
+  })
+
+  Twilio.Device.presence(function(e) {
+    status("Presence event from " + e.from + ": " + e.available + "\n");
+  })
+
+  Twilio.Device.cancel(function(conn) {
+    status("Twilio device cancel\n");
+    connection = null;
+    setState("ready");
+  })
+
+  Twilio.Device.incoming(function(conn) {
+    status("Incoming call from: " + conn.parameters.From + ", Call SID: " + conn.parameters.CallSid + "\n");
+    setState("incoming");
+    connection = conn;
+
+    incoming_label = document.getElementById("incoming_label");
+    incoming_label.innerHTML = conn.parameters.From;
+
+    connected_label = document.getElementById("connected_label");
+    connected_label.innerHTML = conn.parameters.From;
+
+    connection.accept(function(conn) {
+      status("Twilio connection accepted\n");
+    });
+
+    connection.disconnect(function(conn) {
+      console.log("Twilio connection disconnected.\n");
+      connection = null;
+    });
+
+    connection.error(function(error) {
+      status("Twilio connection error: " + error.message + " (" + error.code + ")\n");
+    });
+  })
+
+  function status(msg) {
+    textarea = document.getElementById("statusArea");
+    textarea.innerHTML += msg;
+    console.log(msg);
+  }
+
+  function hangup() {
+    if (connection) {
+      connection.disconnect();
+    }
+  }
+
+  function accept() {
+    if (connection) {
+      connection.accept();
+    }
+  }
+
+  function reject() {
+    if (connection) {
+      connection.reject();
+    }
+    setState("ready");
+  }
+
+  function ignore() {
+    if (connection) {
+      connection.ignore();
+    }
+    setState("ready");
+  }
+
+  function setState(state) {
+    offline = document.getElementById("offline");
+    init = document.getElementById("init");
+    ready = document.getElementById("ready");
+    incoming = document.getElementById("incoming");
+    connected = document.getElementById("connected");
+    calling = document.getElementById("calling");
+    offline.style.display = 'none';
+    init.style.display = 'none';
+    connected.style.display = 'none';
+    ready.style.display = 'none';
+    incoming.style.display = 'none';
+    calling.style.display = 'none';
+    if ("offline" == state) {
+      offline.style.display = 'block';
+    }
+    else if ("ready" == state) {
+      ready.style.display = 'block';
+    }
+    else if ("incoming" == state) {
+      incoming.style.display = 'block';
+    }
+    else if ("connected" == state) {
+      connected.style.display = 'block';
+    }
+    else if ("init" == state) {
+      init.style.display = 'block';
+    }
+    else if ("calling" == state) {
+      calling.style.display = 'block';
+    }
+  }
+
+  function clearStatus() {
+    textarea = document.getElementById("statusArea");
+    textarea.innerHTML = "";
+  }
+
+  function getStatus() {
+    status("Device status: " + Twilio.Device.status() + "\n");
+  }
+
+  function sendDigit(digit) {
+    status("Sending digit: " + digit + "\n");
+//    Twilio.Device.activeConnection().sendDigit(digit);
+
+    if (connection) {
+      connection.sendDigit(digit);
+    }
+    else {
+      status("Cannot send DTMF, connection is not available.\n");
+    }
+  }
+
+  function mute() {
+  if (!connection) {
+      status("Cannot mute, connection is not available.\n");
+      return;
+    }
+    var button = document.getElementById("muteButton");
+    if (muted) {
+      connection.unmute();
+//      Twilio.Device.activeConnection().unmute();
+      button.innerHTML = "Mute";
+      muted = false;
+    }
+    else {
+      connection.mute();
+//      Twilio.Device.activeConnection().mute();
+      button.innerHTML = "Resume";
+      muted = true;
+    }
+  }
+
+  function makeCall() {
+    to_number = document.getElementById("to_number").value;
+    status("Calling " + to_number + "\n");
+    params = {"to_number": to_number, "From":"{{phone}}"}
+    connection = Twilio.Device.connect(params);
+
+    setState("calling");
+    calling_label = document.getElementById("calling_label");
+    calling_label.innerHTML = to_number;
+
+    connected_label = document.getElementById("connected_label");
+    connected_label.innerHTML = to_number;
+
+    connection.accept(function(conn) {
+      status("Twilio connection accepted\n");
+    });
+
+    connection.disconnect(function(conn) {
+      console.log("Twilio connection disconnected.\n");
+      connection = null;
+    });
+
+    connection.accept(function(conn) {
+      status("Twilio connection accepted\n");
+    });
+
+    connection.error(function(error) {
+      status("Twilio connection error: " + error.message + " (" + error.code + ")\n");
+    });
+  }
+
+  </script>
+  </head>
+
+  <body>
+    <h1>Twilio WebRTC Phone</h1>
+    <h3>Config</h3>
+    Realm: 
+    <a href="?realm=dev">dev</a> 
+    <a href="?realm=stage">stage</a> 
+    <a href="?realm=prod">prod</a>,
+    gll: <a href="?realm=ie">ie</a>
+    <a href="?realm=sg">sg</a>
+    <a href="?realm=jp">jp</a>
+    <a href="?realm=br">br</a>
+    <a href="?realm=au">au</a>,
+    VPC gll: <a href="?realm=ie1">ie1</a>
+    <p/>
+    <table border="1">
+     <tr>
+        <td>Realm</td>
+        <td>{{realm}}</td>
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td>{{email}}</td>
+      </tr>
+      <tr>
+        <td>JavaScript</td>
+        <td>{{twiliojs}}</td>
+      </tr>
+      <tr>
+        <td>Account</td>
+        <td>{{account_sid}}</td>
+      </tr>
+      <tr>
+        <td>Application</td>
+        <td>{{app_sid}}</td>
+      </tr>
+      <tr>
+        <td>Client</td>
+        <td>{{client}}</td>
+      </tr>
+      <tr>
+        <td>Phone</td>
+        <td>{{phone}}</td>
+      </tr>
+      <tr>
+        <td>Chunder</td>
+        <td>{{chunder}}</td>
+      </tr>
+      <tr>
+        <td>Chunderw</td>
+        <td>{{chunderw}}</td>
+      </tr>
+      <tr>
+        <td>Matrix</td>
+        <td>{{matrix}}</td>
+      </tr>
+      <tr>
+        <td>secureSignaling</td>
+        <td>{{secureSignaling}}</td>
+      </tr>
+    </table>
+
+    <h3>Phone</h3>
+    <div id="offline">
+      Offline
+    </div>
+    <div id="init" style="display:none">
+      Initializing
+    </div>
+    <div id="ready" style="display:none">
+      Please enter name or number to call:
+      <input type="text" id="to_number" name="to_number" value=""/>
+      <button onclick="makeCall()">Call</button>
+      <br>
+      <label>(e.g., {{phone}}, client:{{client}}, sip:1012@test.conf.io, conf:test)</label>
+    </div>
+    <div id="calling" style="display:none">
+      Calling
+      <span id="calling_label"></span>
+      <button onclick="hangup()">Hangup</button>
+    </div>
+    <div id="incoming" style="display:none">
+      Incoming call from
+      <span id="incoming_label"></span>
+      <button onclick="accept()">Accept</button>
+      <button onclick="ignore()">Ignore</button>
+      <button onclick="reject()">Reject</button>
+    </div>
+    <div id="connected" style="display:none">
+      Connected to 
+      <span id="connected_label"></span>
+      <button onclick="hangup()">Hangup</button>
+      <br>
+      <button id="muteButton" onclick="mute()">Mute</button>
+      <table >
+        <tr>
+          <td><button onclick="sendDigit('1')">1</button></td>
+          <td><button onclick="sendDigit('2')">2</button></td>
+          <td><button onclick="sendDigit('3')">3</button></td>
+        </tr>
+        <tr>
+          <td><button onclick="sendDigit('4')">4</button></td>
+          <td><button onclick="sendDigit('5')">5</button></td>
+          <td><button onclick="sendDigit('6')">6</button></td>
+        </tr>
+        <tr>
+          <td><button onclick="sendDigit('7')">7</button></td>
+          <td><button onclick="sendDigit('8')">8</button></td>
+          <td><button onclick="sendDigit('9')">9</button></td>
+        </tr>
+        <tr>
+          <td><button onclick="sendDigit('*')">*</button></td>
+          <td><button onclick="sendDigit('0')">0</button></td>
+          <td><button onclick="sendDigit('#')">#</button></td>
+        </tr>
+      </table>
+    </div>
+    </p>
+    <button onclick="getStatus()">Status</button>
+    <button onclick="clearStatus()">Clear</button>
+    </p>
+    <textarea rows="20" cols="100" id="statusArea" readonly></textarea>
+  </body>
+</html>
