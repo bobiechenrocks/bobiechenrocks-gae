@@ -10,7 +10,7 @@
 #  phone: '+441986232002'
   chunder: chunder.twilio.com
 #  chunder: flash.dev.twilio.com:11935
-  chunderw: chunderw.twilio.com
+  chunderw: chunderw-gll.twilio.com
 #  chunderw: chunderw-gll.twilio.com
 #  chunderw: chunderw0.ie.twilio.com
 #  chunderw: ec2-54-82-111-202.compute-1.amazonaws.com

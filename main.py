@@ -36,33 +36,43 @@ def callDispatch():
   """        2. to_number starting with client: calls client """
   to_number = request.values.get('to_number')
   resp = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-  resp += "<Response><Dial "
-  if record:
-    resp += "record=\"true\""
-  resp += " callerId=\""
-  resp += request.values.get('From')
-  resp += "\">"
+  
+  resp += "<Response>"
+  
   if to_number == None:
-    """ call from PSTN """
-    params = getParamsFromAccount(request.values.get('AccountSid'))
-    resp += "<Client>"
-    resp += params['client']
-    resp += "</Client>"
-  elif to_number.startswith("client:"):
-    resp += "<Client>"
-    resp += to_number[7:]
-    resp += "</Client>"
-  elif to_number.startswith("sip:"):
-    resp += "<Sip>"
-    resp += to_number
-    resp += "</Sip>"
-  elif to_number.startswith("conf:"):
-    resp += "<Conference>"
-    resp += to_number[5:]
-    resp += "</Conference>"
-  else:  
-    resp += to_number
-  resp += "</Dial></Response>"
+      resp += "<Say>Thanks for using BasicPhone, Please specify outgoing destination and call again later. Good bye.</Say>"
+  else:
+      resp += "<Dial"
+      if record:
+          resp += "record=\"true\""
+      resp += " callerId=\""
+      resp += request.values.get('From')
+      resp += "\">"
+      
+      # if to_number == None:
+          # """ call from PSTN """
+          # params = getParamsFromAccount(request.values.get('AccountSid'))
+          # resp += "<Client>"
+          # resp += params['client']
+          # resp += "</Client>"
+      if to_number.startswith("client:"):
+          resp += "<Client>"
+          resp += to_number[7:]
+          resp += "</Client>"
+      elif to_number.startswith("sip:"):
+          resp += "<Sip>"
+          resp += to_number
+          resp += "</Sip>"
+      elif to_number.startswith("conf:"):
+          resp += "<Conference>"
+          resp += to_number[5:]
+          resp += "</Conference>"
+      else:  
+          resp += to_number
+    
+      resp += "</Dial>"
+          
+  resp += "</Response>"
   logging.debug(resp)
   return resp
 
