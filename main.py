@@ -40,7 +40,7 @@ def callDispatch():
   resp += "<Response>"
   
   if to_number == None:
-      resp += "<Say>Thanks for using BasicPhone, Please specify outgoing destination and call again later. Good bye.</Say>"
+      resp += "<Say>Thanks for using the sample application, Please specify outgoing destination and call again later. Good bye.</Say>"
   else:
       resp += "<Dial"
       if record:
@@ -48,13 +48,14 @@ def callDispatch():
       resp += " callerId=\""
       resp += request.values.get('From')
       resp += "\">"
+
+      resp += "<Client>"
+      resp += to_number[7:]
+      resp += "</Client>"
       
-      # if to_number == None:
-          # """ call from PSTN """
-          # params = getParamsFromAccount(request.values.get('AccountSid'))
-          # resp += "<Client>"
-          # resp += params['client']
-          # resp += "</Client>"
+      resp += "</Dial>"
+          
+      '''
       if to_number.startswith("client:"):
           resp += "<Client>"
           resp += to_number[7:]
@@ -69,8 +70,7 @@ def callDispatch():
           resp += "</Conference>"
       else:  
           resp += to_number
-    
-      resp += "</Dial>"
+      '''
           
   resp += "</Response>"
   logging.debug(resp)
@@ -125,18 +125,32 @@ def getParamsFromAccount(account):
     return config[1]
   else:
     return config[2]
+    
+def get_typed_args(args):
+    d = {}
+    for key, val in args.items():
+        try:
+            # make things like True and False word right
+            # also disallow all access to any builtin symbols/functions
+            d[key] = eval(val, {"__builtins__": {'True':True, 'False':False}}, {})
+        except (SyntaxError, NameError):
+            d[key] = val
+    return d
 
 @app.route('/token')
 def token():
   """ Twilio iOS/Android SDK token generation, client name as per request """
   client = request.values.get('client')
+  typed_args = get_typed_args(request.args)
+  allow_outbound = typed_args.get('allow_outbound')
   try:
     expires = int(request.values.get('expires'))
   except (TypeError, ValueError):
     expires = 3600
   params = getParamsFromRealm(request.values.get('realm'))
   capability = TwilioCapability(params['account_sid'], params['auth_token'])
-  capability.allow_client_outgoing(params['app_sid'])
+  if allow_outbound:
+    capability.allow_client_outgoing(params['app_sid'])
   if client != None:
     capability.allow_client_incoming(client)
   return capability.generate(expires = expires)
