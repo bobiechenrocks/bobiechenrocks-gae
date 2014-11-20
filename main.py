@@ -34,13 +34,32 @@ def callDispatch():
   """ Rules: 1. Call from PSTN has empty to_number, figure   """
   """           out the realm from the account               """
   """        2. to_number starting with client: calls client """
-  to_number = request.values.get('to_number')
+  to_number = request.values.get('To')
   resp = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
   
   resp += "<Response>"
   
-  if to_number == None:
-      resp += "<Say>Thanks for using the sample application, Please specify outgoing destination and call again later. Good bye.</Say>"
+  if to_number == None or not to_number:
+      #resp += "<Say>Thanks for using the sample application, Please specify outgoing destination and call again later. Good bye.</Say>"
+      resp += "<Say>Hi, let me redirect this call to client Bobie</Say>"
+      resp += "<Dial callerId=\""
+      resp += request.values.get('From')
+      resp += "\">"
+      resp += "<Client>bchen</Client>"
+      resp += "</Dial>"
+  elif to_number.isdigit():
+      resp += "<Dial"
+      if record:
+          resp += "record=\"true\""
+      resp += " callerId=\""
+      resp += request.values.get('From')
+      resp += "\">"
+      
+      resp += "<Client>"
+      resp += to_number
+      resp += "</Client>"
+      
+      resp += "</Dial>"
   else:
       resp += "<Dial"
       if record:
@@ -50,7 +69,7 @@ def callDispatch():
       resp += "\">"
 
       resp += "<Client>"
-      resp += to_number[7:]
+      resp += to_number
       resp += "</Client>"
       
       resp += "</Dial>"
