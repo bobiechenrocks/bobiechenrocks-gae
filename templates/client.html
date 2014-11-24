@@ -189,9 +189,9 @@
   }
 
   function makeCall() {
-    to_number = document.getElementById("to_number").value;
+    to_number = document.getElementById("To").value;
     status("Calling " + to_number + "\n");
-    params = {"to_number": to_number, "From":"{{phone}}"}
+    params = {"To": to_number, "From":"{{phone}}"}
     connection = Twilio.Device.connect(params);
 
     setState("calling");
@@ -292,7 +292,7 @@
     </div>
     <div id="ready" style="display:none">
       Please enter name or number to call:
-      <input type="text" id="to_number" name="to_number" value=""/>
+      <input type="text" id="To" name="To" value=""/>
       <button onclick="makeCall()">Call</button>
       <br>
       <label>(e.g., {{phone}}, client:{{client}}, sip:1012@test.conf.io, conf:test)</label>
