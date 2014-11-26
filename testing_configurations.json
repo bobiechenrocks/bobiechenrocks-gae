@@ -1,0 +1,32 @@
+{
+	"configurations" : [
+		{
+			"name" : "Basic settings",
+			"description" : "Basic configurations for incoming and outgoing capabilities",
+			"acc_sid" : "AC665ae3c5061ad161f31137c3f643e81b",
+			"auth_token" : "d386087bea01cceedb8edf5b87b38f7f",
+			"applicaiton" : {
+				"app_sid" : "AP45f30a1c7ddae3d6a61f785b5f23385f",
+				"app_url" : "https://bobie-twilio.appspot.com/callDispatch",
+				"app_desc" : "Simple call-dispatcher to allow connections between clients and PTSN numbers"
+			},
+			"allow_incoming" : "True",
+			"allow_outgoing" : "True",
+			"client_name" : "TwilioiOSHulk"
+		},
+		{
+			"name" : "Incoming only",
+			"description" : "Only allows for incoming connection, not outgoing",
+			"acc_sid" : "AC665ae3c5061ad161f31137c3f643e81b",
+			"auth_token" : "AC665ae3c5061ad161f31137c3f643e81b",
+			"applicaiton" : {
+				"app_sid" : "AP45f30a1c7ddae3d6a61f785b5f23385f",
+				"app_url" : "https://bobie-twilio.appspot.com/callDispatch",
+				"app_desc" : "Simple call-dispatcher to allow connections between clients and PTSN numbers"
+			},
+			"allow_incoming" : "True",
+			"allow_outgoing" : "False",
+			"client_name" : "TwilioiOSHulk"
+		}
+	]
+}
