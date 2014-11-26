@@ -8,6 +8,10 @@ handlers:
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico
+  
+- url: /testing_configs
+  static_files: testing_configurations.json
+  upload: testing_configurations\.json
 
 - url: .*
   script: main.app
