@@ -30,70 +30,21 @@ logging.getLogger().setLevel(logging.DEBUG)
 
 @app.route('/callDispatch', methods=['GET', 'POST'])
 def callDispatch():
-  """ This method routes calls from/to client                """
-  """ Rules: 1. Call from PSTN has empty to_number, figure   """
-  """           out the realm from the account               """
-  """        2. to_number starting with client: calls client """
-  to_number = request.values.get('To')
-  resp = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+    """ This method routes calls from/to client for the SDK testing app.
+        If nothing is specified via "To" parameter, respond with <Say> verb.
+        Otherwise just make a <Dial> to whatever is specified in "To" parameter. """
   
-  resp += "<Response>"
-  
-  if to_number == None or not to_number:
-      #resp += "<Say>Thanks for using the sample application, Please specify outgoing destination and call again later. Good bye.</Say>"
-      resp += "<Say>Hi, let me redirect this call to client Bobie</Say>"
-      resp += "<Dial callerId=\""
-      resp += request.values.get('From')
-      resp += "\">"
-      resp += "<Client>bchen</Client>"
-      resp += "</Dial>"
-  elif to_number.isdigit():
-      resp += "<Dial"
-      if record:
-          resp += "record=\"true\""
-      resp += " callerId=\""
-      resp += request.values.get('From')
-      resp += "\">"
-      
-      resp += "<Client>"
-      resp += to_number
-      resp += "</Client>"
-      
-      resp += "</Dial>"
-  else:
-      resp += "<Dial"
-      if record:
-          resp += "record=\"true\""
-      resp += " callerId=\""
-      resp += request.values.get('From')
-      resp += "\">"
+    resp = twilio.twiml.Response()
+    to_number = request.values.get('To')
+    if to_number == None or not to_number:
+        resp.say("Thanks for using the sample application, Please specify outgoing destination and call again later. Good bye.")
+    elif to_number.isdigit():
+        resp.dial(to_number, callerId=request.values.get('From'))
+    else:
+        resp.dial(callerId=request.values.get('From')).client(to_number)
 
-      resp += "<Client>"
-      resp += to_number
-      resp += "</Client>"
-      
-      resp += "</Dial>"
-          
-      '''
-      if to_number.startswith("client:"):
-          resp += "<Client>"
-          resp += to_number[7:]
-          resp += "</Client>"
-      elif to_number.startswith("sip:"):
-          resp += "<Sip>"
-          resp += to_number
-          resp += "</Sip>"
-      elif to_number.startswith("conf:"):
-          resp += "<Conference>"
-          resp += to_number[5:]
-          resp += "</Conference>"
-      else:  
-          resp += to_number
-      '''
-          
-  resp += "</Response>"
-  logging.debug(resp)
-  return resp
+    print resp.toxml()
+    return resp.toxml()
 
 @app.route('/')
 def startClient():
