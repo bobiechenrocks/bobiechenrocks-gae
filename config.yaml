@@ -1,35 +1,23 @@
 - realm: prod
   email: bchen@twilio.com
   twiliojs: //static.twilio.com/libs/twiliojs/1.2/twilio.js
-#  twiliojs: //static.twilio.com/libs/twiliojs/1.1/twilio.js
   account_sid: AC665ae3c5061ad161f31137c3f643e81b
   auth_token: d386087bea01cceedb8edf5b87b38f7f
   app_sid: AP45f30a1c7ddae3d6a61f785b5f23385f
-  # This number is mapped to http://bobie-twilio.appspot.com/callDispatch
   phone: '+16263250398'
-#  phone: '+441986232002'
   chunder: chunder.twilio.com
-#  chunder: flash.dev.twilio.com:11935
   chunderw: chunderw-gll.twilio.com
-#  chunderw: chunderw-gll.twilio.com
-#  chunderw: chunderw0.ie.twilio.com
-#  chunderw: ec2-54-82-111-202.compute-1.amazonaws.com
   matrix: matrix.twilio.com
   client: bchen
 
 - realm: dev
   email: bchen@twilio.com
   twiliojs: //static.dev.twilio.com/libs/twiliojs/1.2/twilio.js
-#  twiliojs: //static.dev.twilio.com/libs/twiliojs/1.1/twilio.js
-  account_sid: AC665ae3c5061ad161f31137c3f643e81b
-  auth_token: d386087bea01cceedb8edf5b87b38f7f
-  app_sid: AP89f04e5d69174b81e6218f77c8f92d68
-  phone: '+16024925041'
+  account_sid: AC17a2da5cff36c1727d063d463cc60729
+  auth_token: 0335146d49b13b7621efb459946119bd
+  app_sid: AP2733a720d0fac752127315d92e1bc11b
+  phone: '+16024289255'
   chunder: chunder.dev.twilio.com
-#  chunder: flash.dev.twilio.com:11935
-#  chunderw: ec2-54-225-14-34.compute-1.amazonaws.com
-#  chunderw: ec2-54-186-140-245.us-west-2.compute.amazonaws.com
-#  chunderw: chunderw0.dev-gll.twilio.com
   chunderw: chunderw.dev.twilio.com
   matrix: matrix.dev.twilio.com
   client: bchen
@@ -37,16 +25,11 @@
 - realm: stage
   email: bchen@twilio.com
   twiliojs: //static.stage.twilio.com/libs/twiliojs/1.2/twilio.js
-#  twiliojs: //static.stage.twilio.com/libs/twiliojs/1.1/twilio.js
-  account_sid: AC665ae3c5061ad161f31137c3f643e81b
-  auth_token: d386087bea01cceedb8edf5b87b38f7f
-  app_sid: APb84ce7fcfc19674d837c008db42c456f
-  phone: '+16024923600'
+  account_sid: ACc3b7fb56797dee47e31cd487f8f6da84
+  auth_token: 7db11de08e4366bd7e19c58793ee67d2
+  app_sid: APdd3c9767a99f13f18f7d3b09fc257ae1
+  phone: '+16024286943'
   chunder: chunder.stage.twilio.com
-#  chunder: flash.dev.twilio.com:11935
-#  chunderw: ec2-54-186-108-77.us-west-2.compute.amazonaws.com
-#  chunderw: ec2-54-82-67-246.compute-1.amazonaws.com
   chunderw: chunderw.stage.twilio.com
-#  chunderw: chunderw0.us-west-2.stage.twilio.com
   matrix: matrix.stage.twilio.com
   client: bchen

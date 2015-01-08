@@ -36,12 +36,14 @@ def callDispatch():
   
     resp = twilio.twiml.Response()
     to_number = request.values.get('To')
+    params = getParamsFromRealm(request.values.get('realm'))
+    from_number = params['phone']
     if to_number == None or not to_number:
         resp.say("Thanks for using the sample application, Please specify outgoing destination and call again later. Good bye.")
-    elif to_number.isdigit():
-        resp.dial(to_number, callerId=request.values.get('From'))
+    elif to_number[0] in "+1234567890":
+        resp.dial(to_number, callerId=from_number)
     else:
-        resp.dial(callerId=request.values.get('From')).client(to_number)
+        resp.dial(callerId=from_number).client(to_number)
 
     print resp.toxml()
     return resp.toxml()
