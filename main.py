@@ -17,6 +17,7 @@
 
 from flask import Flask, request, render_template
 from twilio.util import TwilioCapability
+from twilio.rest import TwilioRestClient
 import twilio.twiml
 import os
 import yaml
@@ -47,6 +48,22 @@ def callDispatch():
 
     print resp.toxml()
     return resp.toxml()
+    
+@app.route('/etaTwiMinutes', methods=['Get', 'POST'])
+def etaTwiMinutes():
+    params = getParamsFromRealm('prod')
+    account_sid = params['account_sid']
+    auth_token = params['auth_token']
+    print account_sid
+    print auth_token
+    from_number = params['phone']
+    to_number = request.values.get('to')
+    to_message = request.values.get('message')
+
+    client = TwilioRestClient(account_sid, auth_token)
+    message = client.messages.create(to=to_number, from_=from_number, body=to_message)
+
+    return to_message
 
 @app.route('/')
 def startClient():
