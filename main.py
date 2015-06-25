@@ -22,6 +22,7 @@ import twilio.twiml
 import os
 import yaml
 import logging
+from APNSWrapper import *
 
 app = Flask(__name__)
 
@@ -144,28 +145,20 @@ def token():
     capability.allow_client_incoming(client)
   return capability.generate(expires = expires)
 
-@app.route('/ohsip', methods=['GET', 'POST'])
-def ohsip():
-  """ This is the ohsip application """
-  """ For API call, we play a one minute long file """
-  resp = twilio.twiml.Response()
-  number = request.values.get('number')
-  if number == None:
-    resp.play("https://api.twilio.com/cowbell.mp3");
-    logging.debug(resp.toxml())
-    return resp.toxml()
-  test = request.values.get('SipHeader_X-OhSIP-Servlet')
-  if test == 'OutgoingCallReject':
-    resp.reject()
-  else:
-    timeLimit = request.values.get('timeLimit')
-    callerId = request.values.get('callerId')
-    if number.startswith("client:"):
-      resp.dial(callerId=callerId, timeLimit=timeLimit).client(number[7:])
-    else:
-      resp.dial(callerId=callerId, timeLimit=timeLimit).number(number)
-  logging.debug('Test case: ' + str(test) + ', response: ' + resp.toxml())
-  return resp.toxml()
+@app.route('/nicoleHBD')
+def nicoleHBD():
+  wrapper = APNSNotificationWrapper('some.pem', True)
+
+  message = APNSNotification()
+  message.token('sometoken')
+  message.badge(1)
+
+  wrapper.append(message)
+  print message
+  print wrapper
+  
+  return "endpoint nicoleHBD"
+
 
 # original webapp2 codes
 '''
