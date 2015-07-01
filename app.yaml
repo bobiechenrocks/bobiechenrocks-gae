@@ -1,4 +1,4 @@
-application: bobie-twilio
+application: bobiechenrocks
 version: 1
 runtime: python27
 api_version: 1
@@ -8,10 +8,10 @@ handlers:
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico
-  
-- url: /testing_configs
-  static_files: testing_configurations.json
-  upload: testing_configurations\.json
+
+- url: /nicoleBirthdayJSON
+  static_files: nicole28birthday.json
+  upload: nicole28birthday\.json
 
 - url: .*
   script: main.app
@@ -19,3 +19,5 @@ handlers:
 libraries:
 - name: webapp2
   version: "2.5.2"
+- name: ssl
+  version: latest

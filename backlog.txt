@@ -1,0 +1,4 @@
+- white circles around the pics
+- "eye" button to view big pic
+- "grid" button to view all pics as collection-view
+- refresh button
