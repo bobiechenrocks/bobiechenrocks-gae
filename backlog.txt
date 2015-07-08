@@ -1,9 +1,8 @@
 v white circles around the pics
 v "eye" button to view big pic
 v "grid" button to view all pics as collection-view
-- refresh button
+v refresh button
+v save the image fetched from internet
 
-* save push notifications
-* save the image fetched from internet
-
-- "save the pic"
+x save push notifications
+x "save the pic"
